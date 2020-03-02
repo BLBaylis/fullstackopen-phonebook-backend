@@ -17,9 +17,28 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
+const getFormattedDateFromTimeStamp = timestamp => {
+  date = new Date(timestamp)
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth()+1,
+    date: date.getDate(),
+    hours: date.getHours(),
+    minutes: date.getMinutes(),
+    seconds: date.getSeconds(),
+  };
+}
+
 app.get('/api/info', (req, res) => {
   Person.find({})
-    .then(persons => res.send(`<p>Phonebook has entries for ${persons.length} people.</p><p>${Date.now()}</p>`))
+    .then(persons => {
+      const now = Date.now();
+      const { year, month, date, hours, minutes, seconds } = getFormattedDateFromTimeStamp(now);
+      res.send(`
+        <p>Phonebook has entries for ${persons.length} people.</p>
+        <p>${date}/${month}/${year} ${hours}:${minutes}:${seconds}</p>`
+      )
+    })
     .catch(err => {
       console.log(err.message)
       res.status(500).end()
