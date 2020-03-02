@@ -8,9 +8,9 @@ const Person = require('./models/persons')
 const errorHandler = require('./middlewares/errorHandler')
 
 app.use(express.static('build'))
-app.use(cors());
+app.use(cors())
 app.use(bodyParser.json())
-morgan.token('body', (req, res) => req.method === "POST" ? JSON.stringify(req.body) : " ")
+morgan.token('body', req => req.method === 'POST' ? JSON.stringify(req.body) : ' ')
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.get('/', (req, res) => {
@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 })
 
 const getFormattedDateFromTimeStamp = timestamp => {
-  date = new Date(timestamp)
+  const date = new Date(timestamp)
   return {
     year: date.getFullYear(),
     month: date.getMonth()+1,
@@ -26,14 +26,14 @@ const getFormattedDateFromTimeStamp = timestamp => {
     hours: date.getHours(),
     minutes: date.getMinutes(),
     seconds: date.getSeconds(),
-  };
+  }
 }
 
 app.get('/api/info', (req, res) => {
   Person.find({})
     .then(persons => {
-      const now = Date.now();
-      const { year, month, date, hours, minutes, seconds } = getFormattedDateFromTimeStamp(now);
+      const now = Date.now()
+      const { year, month, date, hours, minutes, seconds } = getFormattedDateFromTimeStamp(now)
       res.send(`
         <p>Phonebook has entries for ${persons.length} people.</p>
         <p>${date}/${month}/${year} ${hours}:${minutes}:${seconds}</p>`
@@ -67,7 +67,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.post('/api/persons', (req, res, next) => {
-  const { name, number } = req.body;
+  const { name, number } = req.body
   const person = new Person({ name, number })
   person.save()
     .then(savedPerson => res.json(savedPerson.toJSON()))
@@ -77,7 +77,7 @@ app.post('/api/persons', (req, res, next) => {
 app.put('/api/persons/:id', (req, res, next) => {
   if (!req.body.name || !req.body.number) {
     return res.status(400).json({
-      error : "Missing content"
+      error : 'Missing content'
     })
   }
   Person.findByIdAndUpdate(req.params.id, req.body, { new: true })
