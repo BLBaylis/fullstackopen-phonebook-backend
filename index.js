@@ -67,12 +67,6 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.post('/api/persons', (req, res, next) => {
-  if (!req.body.name || !req.body.number) {
-    return res.status(400).json({
-      error : "Missing content"
-    })
-  }
-
   const { name, number } = req.body;
   const person = new Person({ name, number })
   person.save()
